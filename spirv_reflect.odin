@@ -28,7 +28,7 @@ Result :: enum {
 	ERROR_SPIRV_INVALID_EXECUTION_MODE,
 }
 
-SpvSourceLanguage :: enum {
+SpvSourceLanguage :: enum(u32) {
 	Unknown        = 0,
 	ESSL           = 1,
 	GLSL           = 2,
@@ -39,7 +39,7 @@ SpvSourceLanguage :: enum {
 	Max            = 0x7FFFFFFF,
 }
 
-SpvExecutionModel :: enum {
+SpvExecutionModel :: enum(u32) {
 	Vertex                 = 0,
 	TessellationControl    = 1,
 	TessellationEvaluation = 2,
@@ -106,7 +106,7 @@ DecorationFlagBits :: enum {
 
 DecorationFlags :: u32
 
-ResourceType :: enum {
+ResourceType :: enum(u32) {
 	SPV_REFLECT_RESOURCE_FLAG_UNDEFINED = 0x0,
 	SPV_REFLECT_RESOURCE_FLAG_SAMPLER   = 0x1,
 	SPV_REFLECT_RESOURCE_FLAG_CBV       = 0x2,
@@ -114,7 +114,7 @@ ResourceType :: enum {
 	SPV_REFLECT_RESOURCE_FLAG_UAV       = 0x8,
 }
 
-Format :: enum {
+Format :: enum(u32) {
 	UNDEFINED           = 0,
 	R32_UINT            = 98,
 	R32_SINT            = 99,
@@ -144,7 +144,7 @@ Format :: enum {
 
 VariableFlags :: u32
 
-DescriptorType :: enum {
+DescriptorType :: enum(u32) {
 	SAMPLER                    = 0,
 	COMBINED_IMAGE_SAMPLER     = 1,
 	SAMPLED_IMAGE              = 2,
@@ -159,7 +159,7 @@ DescriptorType :: enum {
 	ACCELERATION_STRUCTURE_KHR = 1000150000,
 }
 
-SpvStorageClass :: enum {
+SpvStorageClass :: enum(u32) {
 	UniformConstant          = 0,
 	Input                    = 1,
 	Uniform                  = 2,
@@ -215,7 +215,7 @@ Scalar :: struct {
 	signedness: u32,
 }
 
-Generator :: enum {
+Generator :: enum(u32) {
 	KHRONOS_LLVM_SPIRV_TRANSLATOR         = 6,
 	KHRONOS_SPIRV_TOOLS_ASSEMBLER         = 7,
 	KHRONOS_GLSLANG_REFERENCE_FRONT_END   = 8,
@@ -243,7 +243,7 @@ NumericTraits :: struct {
 	},
 }
 
-SpvDim :: enum {
+SpvDim :: enum(u32) {
 	_1D         = 0,
 	_2D         = 1,
 	_3D         = 2,
@@ -254,7 +254,7 @@ SpvDim :: enum {
 	Max         = 0x7FFFFFFF,
 }
 
-SpvImageFormat :: enum {
+SpvImageFormat :: enum(u32) {
 	Unknown      = 0,
 	Rgba32f      = 1,
 	Rgba16f      = 2,
@@ -496,7 +496,7 @@ ShaderModule :: struct {
 	},
 }
 
-SpvBuiltIn :: enum {
+SpvBuiltIn :: enum(u32) {
 	Position                    = 0,
 	PointSize                   = 1,
 	ClipDistance                = 3,
@@ -621,7 +621,7 @@ SpvBuiltIn :: enum {
 	Max                         = 0x7FFFFFFF,
 }
 
-SpvOp :: enum {
+SpvOp :: enum(u32) {
 	Nop                                                                   = 0,
 	Undef                                                                 = 1,
 	SourceContinued                                                       = 2,
