@@ -1280,7 +1280,7 @@ SpvOp :: enum(u32) {
 }
 
 
-when ODIN_OS == "windows" {
+when ODIN_OS == .Windows {
 	foreign import spirv_reflect "external/spirv_reflect.lib"
 } else {
 	foreign import spirv_reflect "external/spirv_reflect.a"
