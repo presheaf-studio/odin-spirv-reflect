@@ -28,7 +28,7 @@ Result :: enum {
 	ERROR_SPIRV_INVALID_EXECUTION_MODE,
 }
 
-SpvSourceLanguage :: enum(u32) {
+SpvSourceLanguage :: enum (u32) {
 	Unknown        = 0,
 	ESSL           = 1,
 	GLSL           = 2,
@@ -39,7 +39,7 @@ SpvSourceLanguage :: enum(u32) {
 	Max            = 0x7FFFFFFF,
 }
 
-SpvExecutionModel :: enum(u32) {
+SpvExecutionModel :: enum (u32) {
 	Vertex                 = 0,
 	TessellationControl    = 1,
 	TessellationEvaluation = 2,
@@ -106,7 +106,7 @@ DecorationFlagBits :: enum {
 
 DecorationFlags :: u32
 
-ResourceType :: enum(u32) {
+ResourceType :: enum (u32) {
 	SPV_REFLECT_RESOURCE_FLAG_UNDEFINED = 0x0,
 	SPV_REFLECT_RESOURCE_FLAG_SAMPLER   = 0x1,
 	SPV_REFLECT_RESOURCE_FLAG_CBV       = 0x2,
@@ -114,7 +114,7 @@ ResourceType :: enum(u32) {
 	SPV_REFLECT_RESOURCE_FLAG_UAV       = 0x8,
 }
 
-Format :: enum(u32) {
+Format :: enum (u32) {
 	UNDEFINED           = 0,
 	R32_UINT            = 98,
 	R32_SINT            = 99,
@@ -144,7 +144,7 @@ Format :: enum(u32) {
 
 VariableFlags :: u32
 
-DescriptorType :: enum(u32) {
+DescriptorType :: enum (u32) {
 	SAMPLER                    = 0,
 	COMBINED_IMAGE_SAMPLER     = 1,
 	SAMPLED_IMAGE              = 2,
@@ -159,7 +159,7 @@ DescriptorType :: enum(u32) {
 	ACCELERATION_STRUCTURE_KHR = 1000150000,
 }
 
-SpvStorageClass :: enum(u32) {
+SpvStorageClass :: enum (u32) {
 	UniformConstant          = 0,
 	Input                    = 1,
 	Uniform                  = 2,
@@ -215,7 +215,7 @@ Scalar :: struct {
 	signedness: u32,
 }
 
-Generator :: enum(u32) {
+Generator :: enum (u32) {
 	KHRONOS_LLVM_SPIRV_TRANSLATOR         = 6,
 	KHRONOS_SPIRV_TOOLS_ASSEMBLER         = 7,
 	KHRONOS_GLSLANG_REFERENCE_FRONT_END   = 8,
@@ -243,7 +243,7 @@ NumericTraits :: struct {
 	},
 }
 
-SpvDim :: enum(u32) {
+SpvDim :: enum (u32) {
 	_1D         = 0,
 	_2D         = 1,
 	_3D         = 2,
@@ -254,7 +254,7 @@ SpvDim :: enum(u32) {
 	Max         = 0x7FFFFFFF,
 }
 
-SpvImageFormat :: enum(u32) {
+SpvImageFormat :: enum (u32) {
 	Unknown      = 0,
 	Rgba32f      = 1,
 	Rgba16f      = 2,
@@ -394,7 +394,7 @@ InterfaceVariable :: struct {
 
 BlockVariable :: struct {
 	spirv_id:         u32,
-	name:             ^_c.char,
+	name:             cstring,
 	offset:           u32,
 	absolute_offset:  u32,
 	size:             u32,
@@ -404,8 +404,9 @@ BlockVariable :: struct {
 	array:            ArrayTraits,
 	flags:            VariableFlags,
 	member_count:     u32,
-	members:          ^BlockVariable,
+	members:          [^]BlockVariable,
 	type_description: ^TypeDescription,
+	word_offset:      u32,
 }
 
 DescriptorBinding :: struct {
@@ -496,7 +497,7 @@ ShaderModule :: struct {
 	},
 }
 
-SpvBuiltIn :: enum(u32) {
+SpvBuiltIn :: enum (u32) {
 	Position                    = 0,
 	PointSize                   = 1,
 	ClipDistance                = 3,
@@ -621,7 +622,7 @@ SpvBuiltIn :: enum(u32) {
 	Max                         = 0x7FFFFFFF,
 }
 
-SpvOp :: enum(u32) {
+SpvOp :: enum (u32) {
 	Nop                                                                   = 0,
 	Undef                                                                 = 1,
 	SourceContinued                                                       = 2,
@@ -1289,217 +1290,48 @@ when ODIN_OS == .Windows {
 /* Procedures */
 @(link_prefix = "spvReflect")
 foreign spirv_reflect {
-	CreateShaderModule :: proc(
-		size: uint,
-		p_code: rawptr,
-		p_module: ^ShaderModule,
-	) -> Result ---
-	CreateShaderModule2 :: proc(
-		flags: ModuleFlags,
-		size: uint,
-		p_code: rawptr,
-		p_module: ^ShaderModule,
-	) -> Result ---
-	GetShaderModule :: proc(
-		size: uint,
-		p_code: rawptr,
-		p_module: ^ShaderModule,
-	) -> Result ---
+	CreateShaderModule :: proc(size: uint, p_code: rawptr, p_module: ^ShaderModule) -> Result ---
+	CreateShaderModule2 :: proc(flags: ModuleFlags, size: uint, p_code: rawptr, p_module: ^ShaderModule) -> Result ---
+	GetShaderModule :: proc(size: uint, p_code: rawptr, p_module: ^ShaderModule) -> Result ---
 	DestroyShaderModule :: proc(p_module: ^ShaderModule) ---
 	GetCodeSize :: proc(p_module: ^ShaderModule) -> u32 ---
-	EnumerateDescriptorBindings :: proc(
-		p_module: ^ShaderModule,
-		p_count: ^u32,
-		pp_bindings: ^^DescriptorBinding,
-	) -> Result ---
-	EnumerateEntryPointDescriptorBindings :: proc(
-		p_module: ^ShaderModule,
-		entry_point: ^_c.char,
-		p_count: ^u32,
-		pp_bindings: ^^DescriptorBinding,
-	) -> Result ---
-	EnumerateDescriptorSets :: proc(
-		p_module: ^ShaderModule,
-		p_count: ^u32,
-		pp_sets: ^^DescriptorSet,
-	) -> Result ---
-	EnumerateEntryPointDescriptorSets :: proc(
-		p_module: ^ShaderModule,
-		entry_point: ^_c.char,
-		p_count: ^u32,
-		pp_sets: ^^DescriptorSet,
-	) -> Result ---
-	EnumerateInterfaceVariables :: proc(
-		p_module: ^ShaderModule,
-		p_count: ^u32,
-		pp_variables: ^^InterfaceVariable,
-	) -> Result ---
-	EnumerateEntryPointInterfaceVariables :: proc(
-		p_module: ^ShaderModule,
-		entry_point: ^_c.char,
-		p_count: ^u32,
-		pp_variables: ^^InterfaceVariable,
-	) -> Result ---
-	EnumerateInputVariables :: proc(
-		p_module: ^ShaderModule,
-		p_count: ^u32,
-		pp_variables: ^^InterfaceVariable,
-	) -> Result ---
-	EnumerateEntryPointInputVariables :: proc(
-		p_module: ^ShaderModule,
-		entry_point: ^_c.char,
-		p_count: ^u32,
-		pp_variables: ^^InterfaceVariable,
-	) -> Result ---
-	EnumerateOutputVariables :: proc(
-		p_module: ^ShaderModule,
-		p_count: ^u32,
-		pp_variables: ^^InterfaceVariable,
-	) -> Result ---
-	EnumerateEntryPointOutputVariables :: proc(
-		p_module: ^ShaderModule,
-		entry_point: ^_c.char,
-		p_count: ^u32,
-		pp_variables: ^^InterfaceVariable,
-	) -> Result ---
-	EnumeratePushConstantBlocks :: proc(
-		p_module: ^ShaderModule,
-		p_count: ^u32,
-		pp_blocks: ^^BlockVariable,
-	) -> Result ---
-	EnumeratePushConstants :: proc(
-		p_module: ^ShaderModule,
-		p_count: ^u32,
-		pp_blocks: ^^BlockVariable,
-	) -> Result ---
-	EnumerateEntryPointPushConstantBlocks :: proc(
-		p_module: ^ShaderModule,
-		entry_point: ^_c.char,
-		p_count: ^u32,
-		pp_blocks: ^^BlockVariable,
-	) -> Result ---
-	ChangeDescriptorBindingNumbers :: proc(
-		p_module: ^ShaderModule,
-		p_binding: ^DescriptorBinding,
-		new_binding_number: u32,
-		new_set_number: u32,
-	) -> Result ---
-	ChangeDescriptorBindingNumber :: proc(
-		p_module: ^ShaderModule,
-		p_descriptor_binding: ^DescriptorBinding,
-		new_binding_number: u32,
-		optional_new_set_number: u32,
-	) -> Result ---
-	ChangeDescriptorSetNumber :: proc(
-		p_module: ^ShaderModule,
-		p_set: ^DescriptorSet,
-		new_set_number: u32,
-	) -> Result ---
-	ChangeInputVariableLocation :: proc(
-		p_module: ^ShaderModule,
-		p_input_variable: ^InterfaceVariable,
-		new_location: u32,
-	) -> Result ---
-	ChangeOutputVariableLocation :: proc(
-		p_module: ^ShaderModule,
-		p_output_variable: ^InterfaceVariable,
-		new_location: u32,
-	) -> Result ---
+	EnumerateDescriptorBindings :: proc(p_module: ^ShaderModule, p_count: ^u32, pp_bindings: ^^DescriptorBinding) -> Result ---
+	EnumerateEntryPointDescriptorBindings :: proc(p_module: ^ShaderModule, entry_point: ^_c.char, p_count: ^u32, pp_bindings: ^^DescriptorBinding) -> Result ---
+	EnumerateDescriptorSets :: proc(p_module: ^ShaderModule, p_count: ^u32, pp_sets: ^^DescriptorSet) -> Result ---
+	EnumerateEntryPointDescriptorSets :: proc(p_module: ^ShaderModule, entry_point: ^_c.char, p_count: ^u32, pp_sets: ^^DescriptorSet) -> Result ---
+	EnumerateInterfaceVariables :: proc(p_module: ^ShaderModule, p_count: ^u32, pp_variables: ^^InterfaceVariable) -> Result ---
+	EnumerateEntryPointInterfaceVariables :: proc(p_module: ^ShaderModule, entry_point: ^_c.char, p_count: ^u32, pp_variables: ^^InterfaceVariable) -> Result ---
+	EnumerateInputVariables :: proc(p_module: ^ShaderModule, p_count: ^u32, pp_variables: ^^InterfaceVariable) -> Result ---
+	EnumerateEntryPointInputVariables :: proc(p_module: ^ShaderModule, entry_point: ^_c.char, p_count: ^u32, pp_variables: ^^InterfaceVariable) -> Result ---
+	EnumerateOutputVariables :: proc(p_module: ^ShaderModule, p_count: ^u32, pp_variables: ^^InterfaceVariable) -> Result ---
+	EnumerateEntryPointOutputVariables :: proc(p_module: ^ShaderModule, entry_point: ^_c.char, p_count: ^u32, pp_variables: ^^InterfaceVariable) -> Result ---
+	EnumeratePushConstantBlocks :: proc(p_module: ^ShaderModule, p_count: ^u32, pp_blocks: ^^BlockVariable) -> Result ---
+	EnumeratePushConstants :: proc(p_module: ^ShaderModule, p_count: ^u32, pp_blocks: ^^BlockVariable) -> Result ---
+	EnumerateEntryPointPushConstantBlocks :: proc(p_module: ^ShaderModule, entry_point: ^_c.char, p_count: ^u32, pp_blocks: ^^BlockVariable) -> Result ---
+	ChangeDescriptorBindingNumbers :: proc(p_module: ^ShaderModule, p_binding: ^DescriptorBinding, new_binding_number: u32, new_set_number: u32) -> Result ---
+	ChangeDescriptorBindingNumber :: proc(p_module: ^ShaderModule, p_descriptor_binding: ^DescriptorBinding, new_binding_number: u32, optional_new_set_number: u32) -> Result ---
+	ChangeDescriptorSetNumber :: proc(p_module: ^ShaderModule, p_set: ^DescriptorSet, new_set_number: u32) -> Result ---
+	ChangeInputVariableLocation :: proc(p_module: ^ShaderModule, p_input_variable: ^InterfaceVariable, new_location: u32) -> Result ---
+	ChangeOutputVariableLocation :: proc(p_module: ^ShaderModule, p_output_variable: ^InterfaceVariable, new_location: u32) -> Result ---
 	SourceLanguage :: proc(source_lang: SpvSourceLanguage) -> ^_c.char ---
 	BlockVariableTypeName :: proc(p_var: ^BlockVariable) -> ^_c.char ---
 	GetCode :: proc(p_module: ^ShaderModule) -> ^u32 ---
 	GetEntryPoint :: proc(p_module: ^ShaderModule, entry_point: ^_c.char) -> ^EntryPoint ---
-	GetDescriptorSet :: proc(
-		p_module: ^ShaderModule,
-		set_number: u32,
-		p_result: ^Result,
-	) -> ^DescriptorSet ---
-	GetEntryPointDescriptorSet :: proc(
-		p_module: ^ShaderModule,
-		entry_point: ^_c.char,
-		set_number: u32,
-		p_result: ^Result,
-	) -> ^DescriptorSet ---
-	GetPushConstantBlock :: proc(
-		p_module: ^ShaderModule,
-		index: u32,
-		p_result: ^Result,
-	) -> ^BlockVariable ---
-	GetPushConstant :: proc(
-		p_module: ^ShaderModule,
-		index: u32,
-		p_result: ^Result,
-	) -> ^BlockVariable ---
-	GetEntryPointPushConstantBlock :: proc(
-		p_module: ^ShaderModule,
-		entry_point: ^_c.char,
-		p_result: ^Result,
-	) -> ^BlockVariable ---
-	GetDescriptorBinding :: proc(
-		p_module: ^ShaderModule,
-		binding_number: u32,
-		set_number: u32,
-		p_result: ^Result,
-	) -> ^DescriptorBinding ---
-	GetEntryPointDescriptorBinding :: proc(
-		p_module: ^ShaderModule,
-		entry_point: ^_c.char,
-		binding_number: u32,
-		set_number: u32,
-		p_result: ^Result,
-	) -> ^DescriptorBinding ---
-	GetInputVariableByLocation :: proc(
-		p_module: ^ShaderModule,
-		location: u32,
-		p_result: ^Result,
-	) -> ^InterfaceVariable ---
-	GetInputVariable :: proc(
-		p_module: ^ShaderModule,
-		location: u32,
-		p_result: ^Result,
-	) -> ^InterfaceVariable ---
-	GetEntryPointInputVariableByLocation :: proc(
-		p_module: ^ShaderModule,
-		entry_point: ^_c.char,
-		location: u32,
-		p_result: ^Result,
-	) -> ^InterfaceVariable ---
-	GetInputVariableBySemantic :: proc(
-		p_module: ^ShaderModule,
-		semantic: ^_c.char,
-		p_result: ^Result,
-	) -> ^InterfaceVariable ---
-	GetEntryPointInputVariableBySemantic :: proc(
-		p_module: ^ShaderModule,
-		entry_point: ^_c.char,
-		semantic: ^_c.char,
-		p_result: ^Result,
-	) -> ^InterfaceVariable ---
-	GetOutputVariableByLocation :: proc(
-		p_module: ^ShaderModule,
-		location: u32,
-		p_result: ^Result,
-	) -> ^InterfaceVariable ---
-	GetOutputVariable :: proc(
-		p_module: ^ShaderModule,
-		location: u32,
-		p_result: ^Result,
-	) -> ^InterfaceVariable ---
-	GetEntryPointOutputVariableByLocation :: proc(
-		p_module: ^ShaderModule,
-		entry_point: ^_c.char,
-		location: u32,
-		p_result: ^Result,
-	) -> ^InterfaceVariable ---
-	GetOutputVariableBySemantic :: proc(
-		p_module: ^ShaderModule,
-		semantic: ^_c.char,
-		p_result: ^Result,
-	) -> ^InterfaceVariable ---
-	GetEntryPointOutputVariableBySemantic :: proc(
-		p_module: ^ShaderModule,
-		entry_point: ^_c.char,
-		semantic: ^_c.char,
-		p_result: ^Result,
-	) -> ^InterfaceVariable ---
+	GetDescriptorSet :: proc(p_module: ^ShaderModule, set_number: u32, p_result: ^Result) -> ^DescriptorSet ---
+	GetEntryPointDescriptorSet :: proc(p_module: ^ShaderModule, entry_point: ^_c.char, set_number: u32, p_result: ^Result) -> ^DescriptorSet ---
+	GetPushConstantBlock :: proc(p_module: ^ShaderModule, index: u32, p_result: ^Result) -> ^BlockVariable ---
+	GetPushConstant :: proc(p_module: ^ShaderModule, index: u32, p_result: ^Result) -> ^BlockVariable ---
+	GetEntryPointPushConstantBlock :: proc(p_module: ^ShaderModule, entry_point: ^_c.char, p_result: ^Result) -> ^BlockVariable ---
+	GetDescriptorBinding :: proc(p_module: ^ShaderModule, binding_number: u32, set_number: u32, p_result: ^Result) -> ^DescriptorBinding ---
+	GetEntryPointDescriptorBinding :: proc(p_module: ^ShaderModule, entry_point: ^_c.char, binding_number: u32, set_number: u32, p_result: ^Result) -> ^DescriptorBinding ---
+	GetInputVariableByLocation :: proc(p_module: ^ShaderModule, location: u32, p_result: ^Result) -> ^InterfaceVariable ---
+	GetInputVariable :: proc(p_module: ^ShaderModule, location: u32, p_result: ^Result) -> ^InterfaceVariable ---
+	GetEntryPointInputVariableByLocation :: proc(p_module: ^ShaderModule, entry_point: ^_c.char, location: u32, p_result: ^Result) -> ^InterfaceVariable ---
+	GetInputVariableBySemantic :: proc(p_module: ^ShaderModule, semantic: ^_c.char, p_result: ^Result) -> ^InterfaceVariable ---
+	GetEntryPointInputVariableBySemantic :: proc(p_module: ^ShaderModule, entry_point: ^_c.char, semantic: ^_c.char, p_result: ^Result) -> ^InterfaceVariable ---
+	GetOutputVariableByLocation :: proc(p_module: ^ShaderModule, location: u32, p_result: ^Result) -> ^InterfaceVariable ---
+	GetOutputVariable :: proc(p_module: ^ShaderModule, location: u32, p_result: ^Result) -> ^InterfaceVariable ---
+	GetEntryPointOutputVariableByLocation :: proc(p_module: ^ShaderModule, entry_point: ^_c.char, location: u32, p_result: ^Result) -> ^InterfaceVariable ---
+	GetOutputVariableBySemantic :: proc(p_module: ^ShaderModule, semantic: ^_c.char, p_result: ^Result) -> ^InterfaceVariable ---
+	GetEntryPointOutputVariableBySemantic :: proc(p_module: ^ShaderModule, entry_point: ^_c.char, semantic: ^_c.char, p_result: ^Result) -> ^InterfaceVariable ---
 }
