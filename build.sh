@@ -6,7 +6,7 @@ set -e
 
 echo "Building SPIRV-Reflect.."
 cd SPIRV-Reflect
-cmake . -B build -DSPIRV_REFLECT_EXECUTABLE=OFF -DSPIRV_REFLECT_STATIC_LIB=ON
+cmake . -B build -DSPIRV_REFLECT_EXECUTABLE=OFF -DSPIRV_REFLECT_STATIC_LIB=ON -DCMAKE_BUILD_TYPE=Release
 if [ $(uname -s) = 'Darwin' ]; then
     make -j$(sysctl -n hw.ncpu) -C build
     LIB_EXT=darwin
