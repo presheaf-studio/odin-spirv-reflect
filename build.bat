@@ -2,7 +2,7 @@
 
 setlocal EnableDelayedExpansion
 
-if not exist SPIRV-Reflect\NUL (
+if not exist SPIRV-Reflect (
     git clone --recurse-submodules https://github.com/KhronosGroup/SPIRV-Reflect --depth=1
 )
 
